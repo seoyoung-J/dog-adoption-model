@@ -3,14 +3,12 @@ import os
 import numpy as np
 from PIL import Image
 
-
-# 경로 설정(주피터)
 json_path = "./project-3-at-2025-01-29-10-41-e546c10e.json"
 image_directory = "./all_dogs_img"
 output_npy_path = "./train_500_images.npy"
 
 
-# Label Studio JSON에서 이미지 파일명 추출(앞의 UUID 접두사 제거)
+# 이미지 파일명 추출 (앞의 UUID 접두사 제거)
 def load_image_filenames_from_json(json_path):
     with open(json_path, "r", encoding="utf-8") as f:
         annotations = json.load(f)
@@ -18,8 +16,8 @@ def load_image_filenames_from_json(json_path):
     image_paths = []
     for item in annotations:
         if "image" in item:
-            original_filename = os.path.basename(item["image"])  # "cc1cacd6-page_751_image_1.jpg"
-            cleaned_filename = "-".join(original_filename.split("-")[1:])  # "page_751_image_1.jpg"
+            original_filename = os.path.basename(item["image"])  
+            cleaned_filename = "-".join(original_filename.split("-")[1:])  
             image_paths.append(cleaned_filename)
 
     print(f"Extracted {len(image_paths)} cleaned image filenames from JSON")
@@ -29,7 +27,7 @@ def load_image_filenames_from_json(json_path):
     return image_paths
 
 
-# 이미지 로드 → RGB → 리사이즈(224x224) → [0,1] 정규화 
+# 이미지 로드 → RGB → 리사이즈(224x224) → 0~1정규화 
 def preprocess_images(image_paths, image_directory, size=(224, 224)):
     processed_images = []
     valid_paths = []
@@ -60,7 +58,6 @@ def main():
 
     np.save(output_npy_path, processed_images_array)
     print(f"Saved preprocessed images to {output_npy_path}")
-
 
 if __name__ == "__main__":
     main()
