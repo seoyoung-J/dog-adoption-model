@@ -1,0 +1,18 @@
+# === Python cache ===
+__pycache__/
+*.py[cod]
+
+# === Virtual environment ===
+venv/
+.venv/
+
+# === Jupyter Notebook checkpoints ===
+.ipynb_checkpoints/
+
+# === Data & datasets ===
+/data/ 
+
+# === Images & videos (optional, 주석 해제 시 무시) ===
+*.jpg
+*.jpeg
+*.png
