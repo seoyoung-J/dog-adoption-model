@@ -1,63 +1,70 @@
-import json
-import os
-import numpy as np
+"""
+JSON -> (X.npy, y.npy, files_used.npy 생성)
+- feature_labels == "Mouth Open" → 1, else → 0
+- 존재하고 열리는 이미지만 사용 → RGB, 224x224, float32(0~1) 정규화
+"""
+
+import os, json, numpy as np
 from PIL import Image
 
-json_path = "./project-3-at-2025-01-29-10-41-e546c10e.json"
-image_directory = "./all_dogs_img"
-output_npy_path = "./train_500_images.npy"
+JSON_PATH  = "/content/project-4-ver3.json"   
+IMAGE_DIR  = "/content/label-studio_img_1000"    # 이미지 폴더 경로
+OUTPUT_X   = "/content/X_mouth.npy"              # 이미지 배열 저장 경로
+OUTPUT_Y   = "/content/y_mouth.npy"              # 라벨 배열 저장 경로
+OUTPUT_USED= "/content/files_used.npy"           # 사용된 파일명 순서 저장
+IMG_SIZE   = (224, 224)
 
+# 앞의 UUID 접두사 제거
+def clean_name(s):
+    base = os.path.basename(s)
+    parts = base.split("-")
 
-# 이미지 파일명 추출 (앞의 UUID 접두사 제거)
-def load_image_filenames_from_json(json_path):
-    with open(json_path, "r", encoding="utf-8") as f:
-        annotations = json.load(f)
+    return "-".join(parts[1:]) if len(parts) > 1 else base
 
-    image_paths = []
-    for item in annotations:
-        if "image" in item:
-            original_filename = os.path.basename(item["image"])  
-            cleaned_filename = "-".join(original_filename.split("-")[1:])  
-            image_paths.append(cleaned_filename)
+# JSON 로드 & 파일명:라벨 매핑
+with open(JSON_PATH, "r", encoding="utf-8") as f:
+    data = json.load(f)
 
-    print(f"Extracted {len(image_paths)} cleaned image filenames from JSON")
-    if image_paths:
-        print("Sample filenames:", image_paths[:5])
+fname_to_label = {}
+for item in data:
+    if "image" not in item:
+        continue
+    fn = clean_name(item["image"])
+    lab = 1 if item.get("feature_labels") == "Mouth Open" else 0
+    fname_to_label[fn] = lab
 
-    return image_paths
+# 이미지 로드 및 전처리 
+X_list, y_list, used_files = [], [], []
+not_found, open_error = 0, 0
 
+for item in data:
+    if "image" not in item:
+        continue
+    fn = clean_name(item["image"])
+    if fn not in fname_to_label:
+        continue
 
-# 이미지 로드 → RGB → 리사이즈(224x224) → 0~1정규화 
-def preprocess_images(image_paths, image_directory, size=(224, 224)):
-    processed_images = []
-    valid_paths = []
+    full_path = os.path.join(IMAGE_DIR, fn)
+    if not os.path.exists(full_path):
+        not_found += 1
+        continue
 
-    for filename in image_paths:
-        full_path = os.path.join(image_directory, filename)
+    try:
+        img = Image.open(full_path).convert("RGB")
+        img = img.resize(IMG_SIZE)
+        arr = np.array(img, dtype=np.float32) / 255.0
+    except Exception:
+        open_error += 1
+        continue
 
-        try:
-            img = Image.open(full_path).convert('RGB')
-            img = img.resize(size)
-            img_array = np.array(img, dtype=np.float32) / 255.0
-            processed_images.append(img_array)
-            valid_paths.append(full_path)
-        except FileNotFoundError: 
-            print(f"Warning: File not found - {full_path}")
-        except Exception as e:
-            print(f"Error processing {full_path}: {e}")
+    X_list.append(arr)
+    y_list.append(fname_to_label[fn])
+    used_files.append(fn)
 
-    processed_images_array = np.array(processed_images)
-    print(f"Processed {processed_images_array.shape[0]} images.")
+X = np.array(X_list, dtype=np.float32)
+y = np.array(y_list, dtype=np.int32)
 
-    return processed_images_array, valid_paths
-
-
-def main():
-    image_paths = load_image_filenames_from_json(json_path)
-    processed_images_array, valid_image_paths = preprocess_images(image_paths, image_directory)
-
-    np.save(output_npy_path, processed_images_array)
-    print(f"Saved preprocessed images to {output_npy_path}")
-
-if __name__ == "__main__":
-    main()
+os.makedirs(os.path.dirname(OUTPUT_X), exist_ok=True)
+np.save(OUTPUT_X, X)
+np.save(OUTPUT_Y, y)
+np.save(OUTPUT_USED, np.array(used_files, dtype=object))
