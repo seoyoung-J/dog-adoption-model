@@ -35,7 +35,8 @@ stats = []
 for a in alphas:
     oof_blend = a * oof_rf + (1 - a) * oof_xgb
     p, r, t = precision_recall_curve(y_train, oof_blend)
-    if t.size == 0: continue
+    if t.size == 0:
+        continue
     f1s = 2 * p[1:] * r[1:] / (p[1:] + r[1:] + 1e-12)
 
     if (r[1:] >= recall_floor).any():
