@@ -81,6 +81,7 @@ def pick_threshold(y_true, prob, policy="f1_max", target_p=0.65, default=0.5):
 
     return float(t_[k]), f"F1-max (P={p_[k]:.3f}, R={r_[k]:.3f})"
 
+# 학습 결과 출력 
 def get_model_result(model_name, y_val, val_prob, y_test, test_prob, thr, settings):
     row = (
         f"| {model_name} | "
@@ -97,6 +98,7 @@ def dist(name, yy):
     u,c = np.unique(yy, return_counts=True)
     print(f"{name} dist:", dict(zip(u,c)))
 
+
 # 분할 인덱스 생성 & 저장 
 X = np.load("/content/X_mouth.npy")
 y = np.load("/content/y_mouth.npy").astype(np.int32)
@@ -104,11 +106,6 @@ train_idx, val_idx, test_idx = make_split_indices(y, seed=42)
 np.save("/content/train_idx.npy", train_idx)
 np.save("/content/val_idx.npy", val_idx)
 np.save("/content/test_idx.npy", test_idx)
-
-print("SPLIT SIZES:",len(train_idx), len(val_idx), len(test_idx))
-print("DIST TRAIN:", dict(zip(*np.unique(y[train_idx], return_counts=True))))
-print("DIST VAL  :", dict(zip(*np.unique(y[val_idx], return_counts=True))))
-print("DIST TEST :", dict(zip(*np.unique(y[test_idx], return_counts=True))))
 
 
 # ======== 모델 학습 =======
@@ -133,8 +130,8 @@ val_idx   = np.load("/content/val_idx.npy")
 test_idx  = np.load("/content/test_idx.npy")
 
 X_train, y_train = X[train_idx], y[train_idx]
-X_val,   y_val   = X[val_idx],   y[val_idx]
-X_test,  y_test  = X[test_idx],  y[test_idx]
+X_val, y_val = X[val_idx], y[val_idx]
+X_test, y_test = X[test_idx], y[test_idx]
 
 # Oversampling (train only)
 bal_idx = make_balanced_train_indices(y_train, seed=SEED)
@@ -204,9 +201,6 @@ if base is not None:
             lyr.trainable = True
             trainable_count += 1
     print(f"Unfreezing top layers (excluding BN): {trainable_count}")
-
-else:
-    raise RuntimeError("ResNet50V2 base 레이어를 찾을 수 없습니다.")
 
 # Phase 2 (BCE, AdamW, patience ↑)
 model.compile(
