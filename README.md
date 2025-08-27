@@ -22,9 +22,7 @@
     - 전처리/분석: Python, NumPy, Pandas, Matplotlib  
     - 머신러닝/딥러닝: scikit-learn, TensorFlow(Keras, ResNet50V2) 
     - 이미지 처리: OpenCV  
-
 ---  
-
 ### 데이터 수집 
 - **수집 경로:** 동물보호관리시스템 
 - **데이터 구성**: 
