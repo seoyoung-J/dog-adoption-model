@@ -67,9 +67,9 @@ print("\n=== Soft Voting (RF+XGB) : TEST ===")
 print(classification_report(y_test, y_pred_sv, digits=4))
 print(f"Accuracy : {accuracy_score(y_test, y_pred_sv):.4f}")
 print(f"Precision: {precision_score(y_test, y_pred_sv):.4f}")
-print(f"Recall   : {recall_score(y_test, y_pred_sv):.4f}  (target floor={recall_floor})")
-print(f"F1       : {f1_score(y_test, y_pred_sv):.4f}")
-print(f"ROC-AUC  : {roc_auc_score(y_test, prob_blend):.4f}")
+print(f"Recall : {recall_score(y_test, y_pred_sv):.4f}  (target floor={recall_floor})")
+print(f"F1 : {f1_score(y_test, y_pred_sv):.4f}")
+print(f"ROC-AUC : {roc_auc_score(y_test, prob_blend):.4f}")
 
 rows.append({
     "Model": f"SoftVote RF+XGB (α={alpha:.2f}, thr={thr:.2f})",
