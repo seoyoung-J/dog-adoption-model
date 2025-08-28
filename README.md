@@ -88,4 +88,9 @@
         - Accuracy 0.775 (+0.05)
         - F1-Score 0.769 (+0.037)
         - Recall 0.75 유지  
-        - ROC-AUC: 0.778  
+        - ROC-AUC: 0.778
+
+---  
+
+### 참고자료 
+상세 분석 과정은 [Notion](https://www.notion.so/2089627a91c7804989aed3d5f4d39fda?v=8d37600a577e46f1bcec447df314b4a6&source=copy_link)에 정리되어 있습니다.  
