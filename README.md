@@ -63,17 +63,16 @@
 ### 모델링 
 #### 1) CNN 기반 입 모양 피처 분류 모델 개발   
 - **데이터**: 입 모양 라벨링 데이터 (총 1000건)  
-- **실험 모델**: CNN Scratch / ResNet50V2 Transfer / ResNet50V2 Focal / ResNet50V2 + AdamW  
+- **실험 모델**: (1) CNN Scratch / (2) ResNet50V2 Transfer / (3) ResNet50V2 Focal / (4) ResNet50V2 + AdamW  
     - **평가**: Validation set에서 F1-score 최대화 기준으로 임계값(threshold) 선택  
-    - **최종 선정 CNN 모델**: esNet50V2 + AdamW  
-    - **성능 (test)**: PR-AUC 0.843, ROC-AUC 0.892, F1 0.765
-- **선택 모델 구조** 
+    - **최종 선정 CNN 모델**: **(4) ResNet50V2 + AdamW**    
+    - **성능 (test)**: PR-AUC 0.843, ROC-AUC 0.892, F1 0.765  
+- **선택 모델 구조**  
     - Backbone: ResNet50V2 (ImageNet pretrained, include_top=False, frozen)
     - Head: GAP → Dropout(0.4) → Dense(1, sigmoid)
     - Optimizer: AdamW (learning_rate=3e-4 → fine-tuning 단계 1e-5)
     - Loss: Binary Crossentropy
-    - Metrics: Accuracy, ROC-AUC, PR-AUC
-
+    - Metrics: Accuracy, ROC-AUC, PR-AUC  
 - **팀원 담당 모델**:
     - 악세서리: ResNet50V2 (Binary, 불균형 클래스 증강 적용)  
     - 배경: ResNet50V2 (다중 분류)  
