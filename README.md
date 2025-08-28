@@ -66,7 +66,10 @@
 - **실험 모델**: (1) CNN Scratch / (2) ResNet50V2 Transfer / (3) ResNet50V2 Focal / (4) ResNet50V2 + AdamW  
     - **평가**: Validation set에서 F1-score 최대화 기준으로 임계값(threshold) 선택  
     - **최종 선정 CNN 모델**: **(4) ResNet50V2 + AdamW**    
-    - **성능 (test)**: PR-AUC 0.843, ROC-AUC 0.892, F1 0.765  
+    - **성능 (Test)**:
+        - PR-AUC 0.843
+        - ROC-AUC 0.892
+        - F1 0.765  
 - **선택 모델 구조**  
     - Backbone: ResNet50V2 (ImageNet pretrained, include_top=False, frozen)
     - Head: GAP → Dropout(0.4) → Dense(1, sigmoid)
